@@ -6,27 +6,12 @@ export 'package:aqueduct_test/aqueduct_test.dart';
 export 'package:test/test.dart';
 export 'package:aqueduct/aqueduct.dart';
 
-/// A testing harness for class_scheduler_api.
-///
-/// A harness for testing an aqueduct application. Example test file:
-///
-///         void main() {
-///           Harness harness = Harness()..install();
-///
-///           test("GET /path returns 200", () async {
-///             final response = await harness.agent.get("/path");
-///             expectResponse(response, 200);
-///           });
-///         }
-///
-class Harness extends TestHarness<ClassSchedulerApiChannel> {
+class Harness extends TestHarness<ClassSchedulerApiChannel> with TestHarnessORMMixin {
+  @override
+  ManagedContext get context => channel.context;
+  
   @override
   Future onSetUp() async {
-
-  }
-
-  @override
-  Future onTearDown() async {
-
+    await resetData();
   }
 }
