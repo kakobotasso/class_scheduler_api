@@ -1,0 +1,5 @@
+host: localhost
+port: 5432
+username: cs_user
+password: password
+databaseName: class_scheduler
