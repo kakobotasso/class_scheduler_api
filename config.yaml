@@ -4,3 +4,4 @@ database:
   username: cs_user
   password: password
   databaseName: class_scheduler
+clientId: br.com.class_scheduler_api

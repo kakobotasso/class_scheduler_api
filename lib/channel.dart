@@ -9,7 +9,8 @@ class ClassSchedulerApiChannel extends ApplicationChannel {
 
   @override
   Future prepare() async {
-    logger.onRecord.listen((rec) => print("$rec ${rec.error ?? ""} ${rec.stackTrace ?? ""}"));
+    logger.onRecord.listen(
+        (rec) => print("$rec ${rec.error ?? ""} ${rec.stackTrace ?? ""}"));
   }
 
   @override
@@ -19,11 +20,11 @@ class ClassSchedulerApiChannel extends ApplicationChannel {
     final config = ClassSchedulerApiConfig(options.configurationFilePath);
     final dataModel = ManagedDataModel.fromCurrentMirrorSystem();
     final persistentStore = PostgreSQLPersistentStore.fromConnectionInfo(
-      config.database.username, 
-      config.database.password,
-      config.database.host, 
-      config.database.port, 
-      config.database.databaseName);
+        config.database.username,
+        config.database.password,
+        config.database.host,
+        config.database.port,
+        config.database.databaseName);
 
     context = ManagedContext(dataModel, persistentStore);
 
@@ -31,8 +32,10 @@ class ClassSchedulerApiChannel extends ApplicationChannel {
     authServer = AuthServer(authStorage);
 
     router
-      .route("/register")
-      .link(() => RegisterController(context, authServer));
+        .route("/register")
+        .link(() => RegisterController(context, authServer));
+
+    router.route("/auth/login").link(() => AuthController(authServer));
 
     return router;
   }

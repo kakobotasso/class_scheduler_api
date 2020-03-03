@@ -4,3 +4,4 @@ database:
   username: dart
   password: dart
   databaseName: dart_test
+clientId: br.com.class_scheduler_api
