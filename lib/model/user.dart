@@ -27,3 +27,16 @@ enum UserType {
   teacher,
   student
 }
+
+extension UserTypeExtension on UserType {
+  String get type {
+    switch(this) {
+      case UserType.student:
+        return "student";
+      case UserType.teacher:
+        return "teacher";
+      default:
+        return null;
+    }
+  }
+}

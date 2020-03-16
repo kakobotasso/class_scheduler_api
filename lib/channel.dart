@@ -1,6 +1,7 @@
 import 'package:aqueduct/managed_auth.dart';
 import 'package:class_scheduler_api/controller/klass_type_controller.dart';
 import 'package:class_scheduler_api/controller/register_controller.dart';
+import 'package:class_scheduler_api/controller/user_controller.dart';
 import 'package:class_scheduler_api/model/user.dart';
 import 'package:class_scheduler_api/model/klass_type.dart';
 import 'class_scheduler_api.dart';
@@ -40,6 +41,8 @@ class ClassSchedulerApiChannel extends ApplicationChannel {
     router.route("/auth/login").link(() => AuthController(authServer));
 
     router.route("/class_type/[:id]").link(() => KlassTypeController(context));
+
+    router.route("/user/[:id]").link(() => UserController(context));
 
     return router;
   }
