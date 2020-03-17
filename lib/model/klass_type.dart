@@ -1,5 +1,7 @@
 import 'package:class_scheduler_api/class_scheduler_api.dart';
 
+import 'package:class_scheduler_api/model/recurrence.dart';
+
 class KlassType extends ManagedObject<_KlassType> implements _KlassType {}
 
 class _KlassType {
@@ -8,4 +10,6 @@ class _KlassType {
 
   @Column()
   String name;
+
+  ManagedSet<Recurrence> availableClassesKlassType;
 }
