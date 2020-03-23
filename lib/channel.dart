@@ -1,4 +1,5 @@
 import 'package:aqueduct/managed_auth.dart';
+import 'package:class_scheduler_api/controller/check_in_controller.dart';
 import 'package:class_scheduler_api/controller/klass_controller.dart';
 import 'package:class_scheduler_api/controller/klass_type_controller.dart';
 import 'package:class_scheduler_api/controller/register_controller.dart';
@@ -52,6 +53,8 @@ class ClassSchedulerApiChannel extends ApplicationChannel {
     router.route("/recurrence/[:id]").link(() => RecurrenceController(context));
 
     router.route("/class/[:id]").link(() => KlassController(context));
+
+    router.route("check-in/:klass_id/user/:user_id").link(() => CheckInController(context));
 
     return router;
   }
