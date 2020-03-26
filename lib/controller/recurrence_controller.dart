@@ -1,15 +1,16 @@
 import 'package:aqueduct/aqueduct.dart';
 import 'package:class_scheduler_api/class_scheduler_api.dart';
+import 'package:class_scheduler_api/controller/base_controller.dart';
 import 'package:class_scheduler_api/model/recurrence.dart';
 import 'package:class_scheduler_api/model/user.dart';
 
-class RecurrenceController extends ResourceController {
+class RecurrenceController extends BaseController {
   RecurrenceController(this.context);
 
   ManagedContext context;
 
   @Operation.get()
-  Future<Response> getAllRecurrences() async{
+  Future<Response> getAllRecurrences() async {
     final query = Query<Recurrence>(context)
       ..join(object: (u) => u.user)
       ..join(object: (kt) => kt.type);
@@ -27,7 +28,7 @@ class RecurrenceController extends ResourceController {
 
     final recurrence = await query.fetchOne();
 
-    if(recurrence == null) {
+    if (recurrence == null) {
       return Response.notFound();
     }
 
@@ -35,15 +36,20 @@ class RecurrenceController extends ResourceController {
   }
 
   @Operation.post()
-  Future<Response> createRecurrence(@Bind.body(ignore: ['id']) Recurrence inputRecurrence) async {
+  Future<Response> createRecurrence(
+      @Bind.body(ignore: ['id']) Recurrence inputRecurrence) async {
+    if (await invalidPermission(
+        context, request.authorization, UserType.admin)) {
+      return Response.unauthorized();
+    }
+
     final _errorMessage = _validateFields(inputRecurrence);
 
-    if(_errorMessage.isNotEmpty) {
+    if (_errorMessage.isNotEmpty) {
       return Response.badRequest(body: _errorMessage);
     }
 
-    final query = Query<Recurrence>(context)
-      ..values = inputRecurrence;
+    final query = Query<Recurrence>(context)..values = inputRecurrence;
 
     final insertedRecurrence = await query.insert();
 
@@ -52,8 +58,12 @@ class RecurrenceController extends ResourceController {
 
   @Operation.delete('id')
   Future<Response> deleteRecurrence(@Bind.path("id") int id) async {
-    final query = Query<Recurrence>(context)
-      ..where((r) => r.id).equalTo(id);
+    if (await invalidPermission(
+        context, request.authorization, UserType.admin)) {
+      return Response.unauthorized();
+    }
+
+    final query = Query<Recurrence>(context)..where((r) => r.id).equalTo(id);
 
     await query.delete();
 
@@ -62,26 +72,26 @@ class RecurrenceController extends ResourceController {
       ..join(object: (kt) => kt.type);
     final recurrenceList = await queryList.fetch();
 
-    return Response.ok(recurrenceList);    
+    return Response.ok(recurrenceList);
   }
 
   Map<String, String> _validateFields(Recurrence recurrence) {
-    if(recurrence.dateBegin == null) {
+    if (recurrence.dateBegin == null) {
       return {
         "error": "fields_validation",
         "message": "Date Begin can't be blank",
       };
     }
 
-    if(recurrence.dateBegin.isBefore(DateTime.now())) {
+    if (recurrence.dateBegin.isBefore(DateTime.now())) {
       return {
         "error": "fields_validation",
         "message": "Date Begin can't be earlier than today",
       };
     }
 
-    if(recurrence.dateEnd != null) {
-      if(recurrence.dateEnd.isBefore(DateTime.now())) {
+    if (recurrence.dateEnd != null) {
+      if (recurrence.dateEnd.isBefore(DateTime.now())) {
         return {
           "error": "fields_validation",
           "message": "Date End can't be earlier than today",
@@ -89,28 +99,28 @@ class RecurrenceController extends ResourceController {
       }
     }
 
-    if(recurrence.recurrence == null || recurrence.recurrence.isEmpty) {
+    if (recurrence.recurrence == null || recurrence.recurrence.isEmpty) {
       return {
         "error": "fields_validation",
         "message": "Recurrence can't be blank",
       };
     }
 
-    if(recurrence.hour == null || recurrence.hour.isEmpty) {
+    if (recurrence.hour == null || recurrence.hour.isEmpty) {
       return {
         "error": "fields_validation",
         "message": "Hour can't be blank",
       };
     }
 
-    if(recurrence.user == null) {
+    if (recurrence.user == null) {
       return {
         "error": "fields_validation",
         "message": "User can't be blank",
       };
     }
 
-    if(recurrence.type == null) {
+    if (recurrence.type == null) {
       return {
         "error": "fields_validation",
         "message": "Type can't be blank",

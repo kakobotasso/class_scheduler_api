@@ -4,7 +4,8 @@ import 'package:class_scheduler_api/model/klass_user.dart';
 import 'package:class_scheduler_api/model/recurrence.dart';
 import 'package:class_scheduler_api/model/klass.dart';
 
-class User extends ManagedObject<_User> implements _User, ManagedAuthResourceOwner<_User> {
+class User extends ManagedObject<_User>
+    implements _User, ManagedAuthResourceOwner<_User> {
   @Serialize(input: true, output: false)
   String password;
 
@@ -32,14 +33,11 @@ class _User extends ResourceOwnerTableDefinition {
   ManagedSet<Klass> klasses;
 }
 
-enum UserType {
-  teacher,
-  student
-}
+enum UserType { teacher, student, admin }
 
 extension UserTypeExtension on UserType {
   String get type {
-    switch(this) {
+    switch (this) {
       case UserType.student:
         return "student";
       case UserType.teacher:

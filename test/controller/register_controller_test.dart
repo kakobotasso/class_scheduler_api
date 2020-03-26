@@ -3,16 +3,15 @@ import 'package:class_scheduler_api/model/user.dart';
 import '../harness/app.dart';
 
 void main() {
-  final harness = Harness()
-    ..install();
+  final harness = Harness()..install();
 
   final completeBody = {
-    "name": "John Doe",
-    "email": "john_doe@test.com",
-    "phone": "11 11111-1111",
+    "name": "John Doe 123",
+    "email": "john_doe123@test.com",
+    "phone": "11 11111-2222",
     "userType": UserType.student.index,
-    "username": "johndoe",
-    "password": "password"
+    "username": "johndoe123",
+    "password": "password123"
   };
 
   test("POST /register returns 201", () async {

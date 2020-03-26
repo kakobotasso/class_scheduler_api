@@ -1,14 +1,20 @@
 import 'package:aqueduct/aqueduct.dart';
 import 'package:class_scheduler_api/class_scheduler_api.dart';
+import 'package:class_scheduler_api/controller/base_controller.dart';
 import 'package:class_scheduler_api/model/user.dart';
 
-class UserController extends ResourceController {
+class UserController extends BaseController {
   UserController(this.context);
 
   ManagedContext context;
 
   @Operation.get()
   Future<Response> getAllUsers() async {
+    if (await invalidPermission(
+        context, request.authorization, UserType.admin)) {
+      return Response.unauthorized();
+    }
+
     final query = Query<User>(context);
     final usersList = await query.fetch();
 
@@ -17,12 +23,11 @@ class UserController extends ResourceController {
 
   @Operation.get('id')
   Future<Response> getUserID(@Bind.path("id") int id) async {
-    final query = Query<User>(context)
-      ..where((u) => u.id).equalTo(id);
+    final query = Query<User>(context)..where((u) => u.id).equalTo(id);
 
     final user = await query.fetchOne();
 
-    if(user == null) {
+    if (user == null) {
       return Response.notFound();
     }
 
@@ -31,14 +36,18 @@ class UserController extends ResourceController {
 
   @Operation.delete('id')
   Future<Response> deleteUser(@Bind.path("id") int id) async {
-    final query = Query<User>(context)
-      ..where((u) => u.id).equalTo(id);
+    if (await invalidPermission(
+        context, request.authorization, UserType.admin)) {
+      return Response.unauthorized();
+    }
+
+    final query = Query<User>(context)..where((u) => u.id).equalTo(id);
 
     await query.delete();
 
     final queryList = Query<User>(context);
     final userList = await queryList.fetch();
 
-    return Response.ok(userList);    
+    return Response.ok(userList);
   }
 }

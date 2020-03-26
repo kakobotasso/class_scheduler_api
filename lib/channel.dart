@@ -46,15 +46,30 @@ class ClassSchedulerApiChannel extends ApplicationChannel {
 
     router.route("/auth/login").link(() => AuthController(authServer));
 
-    router.route("/class_type/[:id]").link(() => KlassTypeController(context));
+    router
+        .route("/user/[:id]")
+        .link(() => Authorizer.bearer(authServer))
+        .link(() => UserController(context));
 
-    router.route("/user/[:id]").link(() => UserController(context));
+    router
+        .route("/class_type/[:id]")
+        .link(() => Authorizer.bearer(authServer))
+        .link(() => KlassTypeController(context));
 
-    router.route("/recurrence/[:id]").link(() => RecurrenceController(context));
+    router
+        .route("/recurrence/[:id]")
+        .link(() => Authorizer.bearer(authServer))
+        .link(() => RecurrenceController(context));
 
-    router.route("/class/[:id]").link(() => KlassController(context));
+    router
+        .route("/class/[:id]")
+        .link(() => Authorizer.bearer(authServer))
+        .link(() => KlassController(context));
 
-    router.route("check-in/:klass_id/user/:user_id").link(() => CheckInController(context));
+    router
+        .route("check-in/:klass_id/user/:user_id")
+        .link(() => Authorizer.bearer(authServer))
+        .link(() => CheckInController(context));
 
     return router;
   }
